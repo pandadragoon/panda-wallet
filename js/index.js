@@ -110,7 +110,7 @@ function createCard(card) {
   let children = [];
   children.push(createImg(card.type));
 
-  const cardNumber = createCardNumber(card.type, card.name);
+  const cardNumber = createCardNumber(card.type, card.number);
   children.push(createElement('P', cardNumber, 'card__number'));
 
   const validText = `Valid Thru: ${card.validThru}`;
@@ -195,6 +195,7 @@ function createImg(type) {
   return img;
 }
 
+
 function createInfoText({
   type,
   number,
@@ -219,6 +220,7 @@ function createInfoText({
   }
 }
 
+
 function createItems(items, parentClass, callback) {
   /************************************************************
    * 
@@ -234,6 +236,7 @@ function createItems(items, parentClass, callback) {
     callback(item);
   });
 }
+
 
 function createTransaction(transaction) {
   /************************************************************
@@ -300,6 +303,7 @@ function createTotal(transactions, creditAmount) {
   node.appendChild(totalText);
 }
 
+
 function createTransactions(id) {
   /************************************************************
    * 
@@ -312,12 +316,14 @@ function createTransactions(id) {
   createTotal(card[0].transactions, card[0].creditAmount);
 }
 
+
 function handleClick(id) {
   state.activeCard = id;
   createItems(data.cards, '.app__cards-list', createCard);
 
   createTransactions(state.activeCard);
 }
+
 
 function removeChildren(parentNode) {
   while (parentNode.firstChild) {

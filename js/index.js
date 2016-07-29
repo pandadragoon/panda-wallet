@@ -126,7 +126,10 @@ function createCard(card) {
 function createCardNumber(type, number) {
   /************************************************************
    * 
-   * Get correctly formatted card number based on card type
+   * Get correctly formatted card number based on card type.
+   * Highly unlikely a full card number would be passed through
+   * for the front end to process, but I was bored and wanted
+   * to do some formatting.
    * 
    ***********************************************************/
 
@@ -268,8 +271,7 @@ function createTransaction(transaction) {
   let description = createElement('H3', transaction.description, 'transaction__description');
   let infoText = createInfoText(transaction);
   let infoTextElement = createElement('P', infoText, 'transaction__info-text');
-  middleCol.appendChild(description);
-  middleCol.appendChild(infoTextElement);
+  middleCol = addChildren(middleCol, [description, infoTextElement]);
 
   let amount = createAmount(transaction.amount, colorClass);
 

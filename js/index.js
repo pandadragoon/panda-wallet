@@ -33,6 +33,7 @@
 
 'use strict'
 
+// holds what card is active in order to display correct transactions
 let state = {
   activeCard: 0
 }
@@ -73,7 +74,8 @@ function createAmount(amount, colorClass) {
   /************************************************************
    * 
    * Seperates the price into two elements and then applies 
-   * correct classes for formatting
+   * correct classes for formatting so that the cents
+   * are appropriately superscript
    * 
    ***********************************************************/
 
@@ -99,12 +101,17 @@ function createCard(card) {
 
   let cardClassName = 'app__card';
 
+  // sets appropriate class for active card
+
   if (state.activeCard === card.id) {
     cardClassName = 'app__card--active';
   }
 
   let main = createElement('LI', '', cardClassName);
   main.id = card.id;
+
+  // sets card id for click event to manage changing cards 
+
   main.addEventListener('click', handleClick.bind(null, card.id));
 
   let children = [];
@@ -169,6 +176,12 @@ function createImg(type) {
   /************************************************************
    * 
    * Set the correct src and alt based on which card it is.
+   * This does leave open the possibility of incorrect data
+   * coming through and thus rendering a wrong image, but for
+   * the purposes of this code test I assumed pristine data
+   * for the sake of expediency. Otherwise I would add a 
+   * default switch case that loads a default image if one
+   * could not be found from the type input.
    * 
    ***********************************************************/
 
@@ -206,7 +219,11 @@ function createInfoText({
 }) {
   /************************************************************
    * 
-   * Create a properly formatted string with the correct info
+   * Create a properly formatted string with the correct info.
+   * The whole transaction object is being passed in but I am 
+   * using destructuring to only pull the values I need.  It 
+   * greately simplifies the call to the function and passes
+   * the parsing of what is useful to the function using it.
    * 
    ***********************************************************/
 
@@ -253,6 +270,7 @@ function createTransaction(transaction) {
   let main = createElement('LI', '', 'app__transaction');
   let children = [];
 
+  // creates the 3 columns within the main element
   let leftCol = createElement('SECTION', '', 'transaction__left');
   let middleCol = createElement('SECTION', '', 'transaction__middle');
   let rightCol = createElement('SECTION', '', 'transaction__right');
@@ -260,6 +278,7 @@ function createTransaction(transaction) {
   let symbol = '-';
   let colorClass = 'transaction__debit';
 
+  // deal with the styling differences of a credit vs a debit
   if (transaction.action === 'credit') {
     symbol = '+';
     colorClass = 'transaction__credit';
@@ -320,6 +339,12 @@ function createTransactions(id) {
 
 
 function handleClick(id) {
+  /************************************************************
+   * 
+   * Change state and rerender cards and transactions
+   * 
+   ***********************************************************/
+
   state.activeCard = id;
   createItems(data.cards, '.app__cards-list', createCard);
 
@@ -328,6 +353,12 @@ function handleClick(id) {
 
 
 function removeChildren(parentNode) {
+  /************************************************************
+   * 
+   * Remove all children of a parent node
+   * 
+   ***********************************************************/
+
   while (parentNode.firstChild) {
     parentNode.removeChild(parentNode.firstChild);
   }

@@ -27,7 +27,11 @@
  * of just a few core items
  * that in a larger app I might
  * have modeled as classes.
- * i.e. cards and transactions (｡◕‿◕｡)
+ * i.e. cards and transactions 
+ * 
+ * Minus initialization all of 
+ * the functions are in
+ * alphabetical order (｡◕‿◕｡)
  * 
  **********************************/
 

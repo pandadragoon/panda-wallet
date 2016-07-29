@@ -73,7 +73,7 @@ function addChildren(parent, children) {
 function createAmount(amount, colorClass) {
   /************************************************************
    * 
-   * Seperates the price into two elements and then applies 
+   * Separates the price into two elements and then applies 
    * correct classes for formatting so that the cents
    * are appropriately superscript
    * 

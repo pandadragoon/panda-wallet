@@ -6,6 +6,7 @@ const data = {
     type: 'visa',
     number: 1234567825622562,
     validThru: '12/17',
+    creditAmount: 2000,
     transactions: [{
       action: 'debit',
       type: 'Electronics',
@@ -54,6 +55,7 @@ const data = {
     type: 'amex',
     number: 123456789121001,
     validThru: '07/19',
+    creditAmount: 3000,
     transactions: [{
       action: 'debit',
       type: 'Electronics',
@@ -95,6 +97,7 @@ const data = {
     type: 'mastercard',
     number: 1234567883358335,
     validThru: '09/17',
+    creditAmount: 1500,
     transactions: [{
       action: 'debit',
       type: 'Electronics',

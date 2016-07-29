@@ -7,9 +7,27 @@
  * didn't need to be generalized enough
  * to warrant putting in the time to create
  * a generalized node rendering function.
+ * 
  * That would effectively have meant 
  * creating my own javascript framework
- * for this small code test (｡◕‿◕｡)
+ * for this small code test.
+ * 
+ * For the same reason I didn't separate
+ * out code into a MVC pattern.  Wanted
+ * to keep the javascript as pure vanilla
+ * ES6 and a semi-functional 
+ * programming pattern. 
+ * 
+ * Didn't use an
+ * OOP approach because the size and 
+ * complexity of the app didn't seem
+ * to warrant using ES6 classes or 
+ * ES5 objects, and because most of the
+ * app focused on dom manipulation
+ * of just a few core items
+ * that in a larger app I might
+ * have modeled as classes.
+ * i.e. cards and transactions (｡◕‿◕｡)
  * 
  **********************************/
 
@@ -23,9 +41,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
   /************************************************************
    * 
    * Create cards then create transactions for 
-   * the active card.
+   * the active card.  Hide the loading text as well.
    * 
    ***********************************************************/
+
+  let loading = document.querySelector('.app__loading');
+
+  loading.style.display = 'none';
 
   createItems(data.cards, '.app__cards-list', createCard);
 
@@ -204,11 +226,9 @@ function createItems(items, parentClass, callback) {
    * call function to add node parent
    * 
    ***********************************************************/
-  console.log(items);
+
   let parentNode = document.querySelector(parentClass);
-  while (parentNode.firstChild) {
-    parentNode.removeChild(parentNode.firstChild);
-  }
+  removeChildren(parentNode);
 
   items.forEach((item) => {
     callback(item);
@@ -255,8 +275,30 @@ function createTransaction(transaction) {
   main = addChildren(main, [leftCol, middleCol, rightCol]);
   let node = document.querySelector('.app__transactions-list');
   node.appendChild(main);
+
 }
 
+
+function createTotal(transactions, creditAmount) {
+  /************************************************************
+   * 
+   * Add the total of the transactions
+   * 
+   ***********************************************************/
+
+  // maps over each transaction, pulls the amount (determines if credit or debit) and then adds up all the amounts to reach a total. 
+  let transactionTotal = transactions.map((transaction) => transaction.action === 'credit' ? parseFloat(transaction.amount) : -parseFloat(transaction.amount)).reduce((total, num) => total + num);
+
+  // adds transactions net sum to arbitrary credit limit assigned in data.js
+  let total = transactionTotal + creditAmount;
+
+
+  let node = document.querySelector('.header__balance');
+  let totalText = document.createTextNode(`$${total}`);
+
+  removeChildren(node);
+  node.appendChild(totalText);
+}
 
 function createTransactions(id) {
   /************************************************************
@@ -266,8 +308,8 @@ function createTransactions(id) {
    ***********************************************************/
 
   let card = data.cards.filter((card) => card.id === id);
-  console.log('card', card);
-  createItems(card[0].transactions, '.app__transactions-list', createTransaction)
+  createItems(card[0].transactions, '.app__transactions-list', createTransaction);
+  createTotal(card[0].transactions, card[0].creditAmount);
 }
 
 function handleClick(id) {
@@ -275,4 +317,10 @@ function handleClick(id) {
   createItems(data.cards, '.app__cards-list', createCard);
 
   createTransactions(state.activeCard);
+}
+
+function removeChildren(parentNode) {
+  while (parentNode.firstChild) {
+    parentNode.removeChild(parentNode.firstChild);
+  }
 }

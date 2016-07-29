@@ -108,7 +108,7 @@ function createCard(card) {
   // sets appropriate class for active card
 
   if (state.activeCard === card.id) {
-    cardClassName = 'app__card--active';
+    cardClassName = 'app__card app__card--active';
   }
 
   let main = createElement('LI', '', cardClassName);
@@ -194,16 +194,16 @@ function createImg(type) {
 
   switch (type) {
     case 'visa':
-      imgUrl = '../img/visa.jpg'
-      alt = 'visa card'
+      imgUrl = '../img/visa.png';
+      alt = 'visa card';
       break;
     case 'mastercard':
-      imgUrl = '../img/mastercard.jpg'
-      alt = 'mastercard'
+      imgUrl = '../img/mastercard.png';
+      alt = 'mastercard';
       break;
     case 'amex':
-      imgUrl = '../img/amex.jpg'
-      alt = 'american express card'
+      imgUrl = '../img/amex.png';
+      alt = 'american express card';
       break;
   }
 

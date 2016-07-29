@@ -1,0 +1,278 @@
+/**********************************
+ * 
+ * Deliberately chose not to create
+ * a reciprocal function for creating
+ * dom nodes with children since the
+ * javascript rendering of dom nodes
+ * didn't need to be generalized enough
+ * to warrant putting in the time to create
+ * a generalized node rendering function.
+ * That would effectively have meant 
+ * creating my own javascript framework
+ * for this small code test (｡◕‿◕｡)
+ * 
+ **********************************/
+
+'use strict'
+
+let state = {
+  activeCard: 0
+}
+
+document.addEventListener("DOMContentLoaded", function(event) {
+  /************************************************************
+   * 
+   * Create cards then create transactions for 
+   * the active card.
+   * 
+   ***********************************************************/
+
+  createItems(data.cards, '.app__cards-list', createCard);
+
+  createTransactions(state.activeCard);
+});
+
+function addChildren(parent, children) {
+  /************************************************************
+   * 
+   * Takes a list of children and appends it to a parent node
+   * 
+   ***********************************************************/
+
+  children.forEach((child) => {
+    parent.appendChild(child)
+  });
+
+  return parent;
+}
+
+
+function createAmount(amount, colorClass) {
+  /************************************************************
+   * 
+   * Seperates the price into two elements and then applies 
+   * correct classes for formatting
+   * 
+   ***********************************************************/
+
+  let amountArray = amount.split('.');
+  let amountElement = createElement('P', '', 'transaction__amount');
+  amountElement.classList.add(colorClass);
+
+  let amountBig = createElement('SPAN', `$${amountArray[0]}`, 'amount__big');
+  let amountSmall = createElement('SPAN', `.${amountArray[1]}`, 'amount__small');
+
+  amountElement = addChildren(amountElement, [amountBig, amountSmall]);
+
+  return amountElement;
+}
+
+
+function createCard(card) {
+  /************************************************************
+   * 
+   * Creates a card node and appends it to the card list
+   * 
+   ***********************************************************/
+
+  let cardClassName = 'app__card';
+
+  if (state.activeCard === card.id) {
+    cardClassName = 'app__card--active';
+  }
+
+  let main = createElement('LI', '', cardClassName);
+  main.id = card.id;
+  main.addEventListener('click', handleClick.bind(null, card.id));
+
+  let children = [];
+  children.push(createImg(card.type));
+
+  const cardNumber = createCardNumber(card.type, card.name);
+  children.push(createElement('P', cardNumber, 'card__number'));
+
+  const validText = `Valid Thru: ${card.validThru}`;
+  children.push(createElement('P', validText, 'card__valid'));
+
+  main = addChildren(main, children);
+  let list = document.querySelector('.app__cards-list');
+
+  list.appendChild(main);
+}
+
+
+function createCardNumber(type, number) {
+  /************************************************************
+   * 
+   * Get correctly formatted card number based on card type
+   * 
+   ***********************************************************/
+
+  let cardNumber = '';
+  let numberToString = String(number);
+
+  if (type === 'amex') {
+    cardNumber = `**** ****** ${numberToString.substr(numberToString.length - 5)}`
+  } else {
+    cardNumber = `**** **** **** ${numberToString.substr(numberToString.length - 4)}`
+  }
+
+  return cardNumber;
+}
+
+
+function createElement(element, txt, className) {
+  /************************************************************
+   * 
+   * Create an element with a text node
+   * 
+   ***********************************************************/
+
+  let ele = document.createElement(element);
+  if (txt !== '') {
+    let textNode = document.createTextNode(txt);
+    ele.appendChild(textNode);
+  }
+
+  ele.className = className;
+
+  return ele;
+}
+
+
+function createImg(type) {
+  /************************************************************
+   * 
+   * Set the correct src and alt based on which card it is.
+   * 
+   ***********************************************************/
+
+  let imgUrl = '';
+  let alt = '';
+
+  switch (type) {
+    case 'visa':
+      imgUrl = '../img/visa.jpg'
+      alt = 'visa card'
+      break;
+    case 'mastercard':
+      imgUrl = '../img/mastercard.jpg'
+      alt = 'mastercard'
+      break;
+    case 'amex':
+      imgUrl = '../img/amex.jpg'
+      alt = 'american express card'
+      break;
+  }
+
+  const img = document.createElement('IMG');
+  img.src = imgUrl;
+  img.alt = alt;
+  img.className = 'card__img'
+
+  return img;
+}
+
+function createInfoText({
+  type,
+  number,
+  date
+}) {
+  /************************************************************
+   * 
+   * Create a properly formatted string with the correct info
+   * 
+   ***********************************************************/
+
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  let formattedDate = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+
+  if (type.length === 0) {
+    return `${type} ${number} - ${formattedDate}`;
+  } else {
+    return `${number} - ${formattedDate}`;
+  }
+}
+
+function createItems(items, parentClass, callback) {
+  /************************************************************
+   * 
+   * Clear current nodes and cycle through each new item and
+   * call function to add node parent
+   * 
+   ***********************************************************/
+  console.log(items);
+  let parentNode = document.querySelector(parentClass);
+  while (parentNode.firstChild) {
+    parentNode.removeChild(parentNode.firstChild);
+  }
+
+  items.forEach((item) => {
+    callback(item);
+  });
+}
+
+function createTransaction(transaction) {
+  /************************************************************
+   * 
+   * Creates three columns and assigns them values based on the
+   * transaction object.  It then appends to the proper list
+   * node
+   * 
+   ***********************************************************/
+
+  let main = createElement('LI', '', 'app__transaction');
+  let children = [];
+
+  let leftCol = createElement('SECTION', '', 'transaction__left');
+  let middleCol = createElement('SECTION', '', 'transaction__middle');
+  let rightCol = createElement('SECTION', '', 'transaction__right');
+
+  let symbol = '-';
+  let colorClass = 'transaction__debit';
+
+  if (transaction.action === 'credit') {
+    symbol = '+';
+    colorClass = 'transaction__credit';
+  }
+
+  let symbolElement = createElement('SPAN', symbol, 'transaction__symbol');
+  leftCol.appendChild(symbolElement);
+
+  let description = createElement('H3', transaction.description, 'transaction__description');
+  let infoText = createInfoText(transaction);
+  let infoTextElement = createElement('P', infoText, 'transaction__info-text');
+  middleCol.appendChild(description);
+  middleCol.appendChild(infoTextElement);
+
+  let amount = createAmount(transaction.amount, colorClass);
+
+  rightCol.appendChild(amount);
+
+  main = addChildren(main, [leftCol, middleCol, rightCol]);
+  let node = document.querySelector('.app__transactions-list');
+  node.appendChild(main);
+}
+
+
+function createTransactions(id) {
+  /************************************************************
+   * 
+   * Filter out active card and then create transactions
+   * 
+   ***********************************************************/
+
+  let card = data.cards.filter((card) => card.id === id);
+  console.log('card', card);
+  createItems(card[0].transactions, '.app__transactions-list', createTransaction)
+}
+
+function handleClick(id) {
+  state.activeCard = id;
+  createItems(data.cards, '.app__cards-list', createCard);
+
+  createTransactions(state.activeCard);
+}

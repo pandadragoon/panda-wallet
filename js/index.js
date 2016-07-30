@@ -1,7 +1,7 @@
 /**********************************
  * 
  * Deliberately chose not to create
- * a reciprocal function for creating
+ * a recursive function for creating
  * dom nodes with children since the
  * javascript rendering of dom nodes
  * didn't need to be generalized enough
